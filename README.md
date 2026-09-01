@@ -39,40 +39,21 @@
 9. 挑战风魔龙
 10. 完成最终剧情
 
-开发环境
-C++17
-Visual Studio 2022
-MSVC v143
-CMake
-Windows
-Visual Studio 运行
+## 开发环境
 
-推荐直接打开：
+- C++17
+- Visual Studio 2022
+- MSVC v143
+- CMake
+- Windows
 
-genshinn.sln
 
-或：
+##项目说明
 
-genshinn.vcxproj
+本项目主要用于 C++ 面向对象程序设计课程实践，涉及：
 
-选择 x64 配置后编译运行。
-
-Ctrl + Shift + B    生成解决方案
-Ctrl + F5           运行程序
-
-项目启用了 UTF-8 编译选项，以支持中文控制台输出。
-
-CMake 编译
-cmake -S . -B build
-cmake --build build --config Release
-存档
-
-游戏存档默认保存在运行目录中的：
-
-savegame.txt
-
-存档内容包括玩家属性、当前位置、等级经验、摩拉、背包、装备、任务进度以及重要敌人的击败状态。
-
-项目说明
-
-本项目主要用于 C++ 面向对象程序设计课程实践，涉及继承、多态、STL 容器、文件读写、模块化设计以及简单的游戏状态管理。
+-继承与多态
+-STL 容器
+-文件读写
+-模块化设计
+-简单的游戏状态管理
