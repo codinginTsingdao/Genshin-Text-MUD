@@ -25,7 +25,7 @@ Item GameFactory::createItem(int id) {
         case 8: return {8, "风龙的眼泪", ItemType::Quest, EquipmentSlot::None, "蕴含异常风元素的泪滴。", true, 0, {0, 0}};
         case 9: return {9, "净化结晶", ItemType::Quest, EquipmentSlot::None, "解除风之封印所需的净化材料。", true, 0, {0, 0}};
         case 10: return {10, "风之钥匙", ItemType::Quest, EquipmentSlot::None, "温迪交给你的古老钥匙。", true, 0, {0, 0}};
-        case 11: return {11, "北地烟熏鸡", ItemType::Consumable, EquipmentSlot::None, "恢复40点体力。", true, 0, {0, 0}, 40, 0};
+        case 11: return {11, "北地烟熏鸡", ItemType::Consumable, EquipmentSlot::None, "恢复40生命。", true,  40, {0, 0}};
         default: throw std::invalid_argument("unknown item id");
     }
 }
@@ -49,19 +49,19 @@ int GameFactory::itemIdFromName(const std::string& raw) {
 std::unique_ptr<Enemy> GameFactory::createEnemy(int id) {
     switch (id) {
         // 低语森林：教学怪
-    case 1001: return std::make_unique<Enemy>(id, "丘丘人", 55, 13, 5, 8, 0.82, 0.05, 45, 25, std::vector<std::pair<int, int>>{{5, 1}});
+    case 1001: return std::make_unique<Enemy>(id, "丘丘人", 55, 10, 5, 8, 0.82, 0.05, 45, 25, std::vector<std::pair<int, int>>{{5, 1}});
         // 风起地：风史莱姆
-    case 1101: return std::make_unique<Enemy>(id, "风史莱姆", 50, 14, 4, 15, 0.84, 0.10, 50, 30, std::vector<std::pair<int, int>>{{9, 1}});
+    case 1101: return std::make_unique<Enemy>(id, "风史莱姆", 50, 12, 4, 15, 0.84, 0.10, 50, 30, std::vector<std::pair<int, int>>{{9, 1}});
         // 风起地：远程型敌人
-    case 1102: return std::make_unique<Enemy>(id, "丘丘人射手", 65, 16, 5, 12, 0.88, 0.08, 60, 35, std::vector<std::pair<int, int>>{{9, 1}, { 5, 1 }});
+    case 1102: return std::make_unique<Enemy>(id, "丘丘人射手", 65, 14, 5, 12, 0.88, 0.08, 60, 35, std::vector<std::pair<int, int>>{{9, 1}, { 5, 1 }});
         // 风起地：中期精英
-    case 1103: return std::make_unique<Enemy>(id, "深渊法师", 85, 19, 8, 10, 0.87, 0.08, 85, 55, std::vector<std::pair<int, int>>{{9, 1}, { 11, 1 }});
+    case 1103: return std::make_unique<Enemy>(id, "深渊法师", 85, 16, 8, 10, 0.87, 0.08, 85, 55, std::vector<std::pair<int, int>>{{9, 1}, { 11, 1 }});
         // 风龙废墟：高血高防
-    case 1201: return std::make_unique<Enemy>(id, "丘丘暴徒", 110, 22, 12, 8, 0.84, 0.05, 100, 65, std::vector<std::pair<int, int>>{{6, 1}});
+    case 1201: return std::make_unique<Enemy>(id, "丘丘暴徒", 110, 18, 12, 8, 0.84, 0.05, 100, 65, std::vector<std::pair<int, int>>{{6, 1}});
         // 风龙废墟：Boss 前精英怪
-    case 1202: return std::make_unique<Enemy>(id, "遗迹守卫", 150, 26, 16, 7, 0.82, 0.03, 150, 100, std::vector<std::pair<int, int>>{{7, 1}, { 11, 1 }});
+    case 1202: return std::make_unique<Enemy>(id, "遗迹守卫", 150, 19, 16, 7, 0.82, 0.03, 150, 100, std::vector<std::pair<int, int>>{{7, 1}, { 11, 1 }});
         // 最终 Boss
-    case 2001: return std::make_unique<BossEnemy>(id, "风魔龙", 220, 90, 25, 10, 14, 0.90, 0.08, 300, 300);
+    case 2001: return std::make_unique<BossEnemy>(id, "风魔龙", 220, 90, 20, 10, 14, 0.90, 0.08, 300, 300);
     default: return nullptr;
     }
 }

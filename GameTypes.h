@@ -1,4 +1,4 @@
-#ifndef GAME_TYPES_H
+﻿#ifndef GAME_TYPES_H
 #define GAME_TYPES_H
 
 #include <string>
@@ -6,7 +6,7 @@
 enum class Direction { North, South, East, West, Invalid };
 
 enum class CommandType {
-    Help, Look, North, South, East, West,
+    Help, Look, Map, North, South, East, West,
     Talk, Attack, Inventory, Use, Equip, Unequip,
     Status, Save, Load, NewGame, Menu, Quit, Unknown
 };

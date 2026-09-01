@@ -1,4 +1,4 @@
-#ifndef GAME_H
+﻿#ifndef GAME_H
 #define GAME_H
 
 #include "CombatSystem.h"
@@ -27,7 +27,7 @@ private:
     bool loadGame();
     void exploreLoop();
     void executeCommand(const Command& command);
-
+    void showMap() const;
     void showRoom() const;
     void showHelp() const;
     void showStatus() const;

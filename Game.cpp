@@ -29,7 +29,7 @@ void clearScreen() {
 #endif
 }
 
-// Windows 下完全沿用原项目的“按任意键继续”体验；其他平台用于编译测试。
+
 void waitAnyKey() {
 #ifdef _WIN32
     (void)_getch();
@@ -307,6 +307,7 @@ void Game::executeCommand(const Command& command) {
     switch (command.type) {
         case CommandType::Help: showHelp(); break;
         case CommandType::Look: showRoom(); break;
+        case CommandType::Map: showMap(); break;
         case CommandType::North: move(Direction::North); break;
         case CommandType::South: move(Direction::South); break;
         case CommandType::East: move(Direction::East); break;
@@ -349,6 +350,7 @@ void Game::showHelp() const {
     std::cout << "\n【场景与移动】\n";
     std::cout << "  help / 帮助          查看全部指令\n";
     std::cout << "  look / 查看          查看当前场景\n";
+    std::cout << "  map / 地图           查看世界地图\n";
     std::cout << "  north / 北           向北移动\n";
     std::cout << "  south / 南           向南移动\n";
     std::cout << "  east / 东            向东移动\n";
@@ -372,6 +374,67 @@ void Game::showHelp() const {
     std::cout << "  quit / 退出          退出游戏\n";
 
     std::cout << "\n======================================================\n";
+}
+void Game::showMap() const
+{
+    auto here = [this](int roomId) -> std::string {
+        return m_currentRoom == roomId ? "  ●" : "";
+    };
+
+    std::cout
+        << CYAN
+        << "\n====================== 世界地图 ======================\n"
+        << RESET;
+
+    std::cout << "\n";
+
+    // ================= 风龙废墟 =================
+    std::cout << "                                   [天空战场] ★ 风魔龙\n";
+    std::cout << "                                       |\n";
+    std::cout << "                                     [高塔]\n";
+    std::cout << "                                       |\n";
+    std::cout << "                                    [风墙] ⚔ 遗迹守卫\n";
+    std::cout << "                                      |\n";
+    std::cout << "                                  [外围废墟] ⚔ 丘丘暴徒\n";
+    std::cout << "                                      |\n";
+    std::cout << "                                  [封印祭坛] ⚔ 深渊法师\n";
+    std::cout << "                                      |\n";
+    std::cout << "                                [古代遗迹入口] ⚔ 丘丘人射手\n";
+    std::cout << "                                      |\n";
+    std::cout << "                                   [大树下] ⚔ 风史莱姆\n";
+    std::cout << "                                      |\n";
+    std::cout << "                                   [风起地] ♟温迪\n";
+    std::cout << "                                      |\n";
+    std::cout << "                                  [北城门]\n";
+    std::cout << "                                     |\n";
+    std::cout << "               [铁匠铺] -------- [中央广场] -------- [西风骑士团]\n";
+    std::cout << "                                    |\n";
+    std::cout << "                                [蒙德城门]\n";
+    std::cout << "                                    |\n";
+    std::cout << "[森林小径] ♟ 安柏" << "    --------[丘丘人营地] ⚔ 丘丘人\n" ;
+    std::cout << "";
+    std::cout << "     |\n";
+    std::cout << " [鹰翔海滩]\n";
+
+    std::cout << "\n";
+
+    std::cout
+        << "图例：   ♟ NPC   ⚔ 敌人   ★ Boss\n";
+
+
+    const Room* room = m_world.getRoom(m_currentRoom);
+
+    if (room)
+    {
+        std::cout
+            << GREEN
+            << "当前位置：" << room->getName()
+            << RESET
+            << "\n";
+    }
+
+    std::cout
+        << "======================================================\n";
 }
 void Game::showRoom() const {
     const Room* room = m_world.getRoom(m_currentRoom);
@@ -582,8 +645,20 @@ void Game::attack(const std::string& enemyName) {
     CombatResult result = m_combat.fight(m_player, *enemy, std::cin, std::cout);
     if (result == CombatResult::Victory) {
         handleEnemyVictory(*enemy);
-    } else if (result == CombatResult::Defeat) {
-        std::cout << RED << "你倒在了战斗中。可以从主菜单读取之前的存档，或开始新游戏。" << RESET << "\n";
+    }
+    else if (result == CombatResult::Defeat) {
+
+        std::cout << RED
+            << "\n==============================\n"
+            << "          战 斗 失 败\n"
+            << "==============================\n"
+            << "你倒在了战斗中。\n"
+            << "可以从主菜单读取之前的存档，或重新开始游戏。\n"
+            << RESET;
+
+        pauseWithOriginalText();
+        clearScreen();
+
         m_exploring = false;
         m_inGame = false;
     }
@@ -638,8 +713,6 @@ void Game::showInventory() const {
         std::cout << "背包为空。\n";
     }
     else {
-        // 这里显示的是“背包序号”1、2、3……，
-        // 不再显示 Item 内部使用的 item.id。
         for (std::size_t i = 0; i < items.size(); ++i) {
             const auto& stack = items[i];
 
@@ -669,6 +742,7 @@ void Game::showInventory() const {
 
     std::cout << "==============================\n";
 }
+
 
 void Game::useItem(const std::string& itemName) {
     if (itemName.empty()) {
@@ -728,8 +802,6 @@ void Game::showStatus() const {
     std::cout << "名字：" << m_player.getName() << std::endl;
     std::cout << "等级：" << m_player.getLV() << std::endl;
     std::cout << "血量：" << m_player.getNHP() << "/" << m_player.getMHP() << std::endl;
-    std::cout << "体力：" << m_player.getTP() << std::endl;
-    std::cout << "元素充能：" << m_player.getENERGY() << std::endl;
     std::cout << "攻击：" << m_player.effectiveAttack() << "  防御：" << m_player.effectiveDefense() << std::endl;
     std::cout << "经验：" << m_player.getExp() << "/" << m_player.getLevel() * 100 << std::endl;
     std::cout << "摩拉：" << m_player.getMora() << std::endl;

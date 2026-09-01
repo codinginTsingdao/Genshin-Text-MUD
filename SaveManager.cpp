@@ -1,4 +1,4 @@
-#include "SaveManager.h"
+﻿#include "SaveManager.h"
 #include "GameFactory.h"
 #include <fstream>
 #include <iomanip>
@@ -15,13 +15,13 @@ bool SaveManager::save(const std::string& path, const Player& player, int roomId
         return false;
     }
 
-    out << "GENSHINN_SAVE 1\n";
+    out << "GENSHINN_SAVE 2\n";
     out << "NAME " << std::quoted(player.getName()) << "\n";
     out << "HP " << player.getCurrentHp() << ' ' << player.getMaxHp() << "\n";
     out << "BASE " << player.getAttack() << ' ' << player.getDefense() << ' '
         << player.getAgility() << ' ' << player.getHitRate() << ' ' << player.getDodgeRate() << "\n";
     out << "PROGRESS " << player.getLevel() << ' ' << player.getExp() << ' '
-        << player.getMora() << ' ' << player.getTP() << ' ' << player.getEnergy() << "\n";
+        << player.getMora() << ' ' << "\n";
     out << "ROOM " << roomId << "\n";
     out << "QUEST " << static_cast<int>(quest.getStage()) << ' ' << quest.getSealsBroken() << "\n";
 
@@ -65,13 +65,13 @@ bool SaveManager::load(const std::string& path, Player& player, int& roomId,
     std::string key, name;
     int hp, maxHp, attack, defense, agility;
     double hitRate, dodgeRate;
-    int level, exp, mora, tp, energy;
+    int level, exp, mora;
     int questStage, seals;
 
     if (!(in >> key) || key != "NAME" || !(in >> std::quoted(name))) { error = "存档缺少 NAME 字段。"; return false; }
     if (!(in >> key >> hp >> maxHp) || key != "HP") { error = "存档 HP 字段损坏。"; return false; }
     if (!(in >> key >> attack >> defense >> agility >> hitRate >> dodgeRate) || key != "BASE") { error = "存档 BASE 字段损坏。"; return false; }
-    if (!(in >> key >> level >> exp >> mora >> tp >> energy) || key != "PROGRESS") { error = "存档 PROGRESS 字段损坏。"; return false; }
+    if (!(in >> key >> level >> exp >> mora ) || key != "PROGRESS") { error = "存档 PROGRESS 字段损坏。"; return false; }
     if (!(in >> key >> roomId) || key != "ROOM" || roomId < 1 || roomId > 16) { error = "存档 ROOM 字段损坏。"; return false; }
     if (!(in >> key >> questStage >> seals) || key != "QUEST" || questStage < 0 || questStage > 9) { error = "存档 QUEST 字段损坏。"; return false; }
 
@@ -114,8 +114,6 @@ bool SaveManager::load(const std::string& path, Player& player, int& roomId,
         loaded.setLevel(level);
         loaded.setExp(exp);
         loaded.setMora(mora);
-        loaded.setTP(tp);
-        loaded.setEnergy(energy);
         loaded.setCurrentHp(hp);
         loaded.inventory().clear();
         loaded.equipment().clear();

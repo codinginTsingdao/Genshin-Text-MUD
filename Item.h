@@ -1,4 +1,4 @@
-#ifndef ITEM_H
+﻿#ifndef ITEM_H
 #define ITEM_H
 
 #include <string>
@@ -20,8 +20,6 @@ struct Item {
     bool stackable{true};
     int healAmount{0};
     StatBonus bonus;
-    int restoreTP{0};
-    int restoreEnergy{0};
 };
 
 #endif

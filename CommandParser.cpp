@@ -1,4 +1,4 @@
-#include "CommandParser.h"
+﻿#include "CommandParser.h"
 #include <algorithm>
 #include <cctype>
 #include <sstream>
@@ -33,6 +33,7 @@ Command CommandParser::parse(const std::string& input) const {
 
     if (verb == "help" || verb == "帮助") return {CommandType::Help, argument};
     if (verb == "look" || verb == "查看") return {CommandType::Look, argument};
+    if (verb == "map" ||verb == "地图") return { CommandType::Map, argument };
     if (verb == "north" || verb == "n" || verb == "北") return {CommandType::North, argument};
     if (verb == "south" || verb == "s" || verb == "南") return {CommandType::South, argument};
     if (verb == "east" || verb == "e" || verb == "东") return {CommandType::East, argument};

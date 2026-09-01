@@ -1,4 +1,4 @@
-#include "CombatSystem.h"
+﻿#include "CombatSystem.h"
 #include "BossEnemy.h"
 #include <algorithm>
 #include <iomanip>
@@ -6,7 +6,29 @@
 #include <limits>
 #include <sstream>
 #include <vector>
+namespace {
 
+    void printHpBar(std::ostream& out, int current, int maximum, int width = 20)
+    {
+        if (maximum <= 0) return;
+
+        current = std::clamp(current, 0, maximum);
+        int filled = current * width / maximum;
+
+        out << "[";
+
+        out << "\033[41m";
+        for (int i = 0; i < filled; ++i)
+            out << " ";
+
+        out << "\033[40m";
+        for (int i = filled; i < width; ++i)
+            out << " ";
+
+        out << "\033[0m]";
+    }
+
+}
 CombatSystem::CombatSystem() : m_rng(std::random_device{}()) {}
 
 bool CombatSystem::roll(double probability) {
@@ -58,10 +80,10 @@ void CombatSystem::enemyAttack(Enemy& enemy, Player& player, int turn, std::ostr
     int damage = calculateDamage(enemy, player);
     if (auto* boss = dynamic_cast<BossEnemy*>(&enemy);
         boss && boss->getPhase() == 2 && turn % 3 == 0) {
-        damage = damage * 3 / 2 + 4;
+
+        damage = 20;   // 风息固定造成20点伤害
         out << "风魔龙仰头蓄力——【风息】席卷整个平台！\n";
     }
-
     player.takeDamage(damage);
     out << "你受到 " << damage << " 点伤害。"
         << " [HP " << player.getCurrentHp() << "/" << player.getMaxHp() << "]\n";
@@ -88,17 +110,6 @@ bool CombatSystem::useItemTurn(Player& player, std::istream& in, std::ostream& o
             hasEffect = true;
         }
 
-        if (stack.item.restoreTP > 0) {
-            if (hasEffect) out << "，";
-            out << "TP +" << stack.item.restoreTP;
-            hasEffect = true;
-        }
-
-        if (stack.item.restoreEnergy > 0) {
-            if (hasEffect) out << "，";
-            out << "元素充能 +" << stack.item.restoreEnergy;
-            hasEffect = true;
-        }
 
         if (!hasEffect) out << "无恢复效果";
 
@@ -160,7 +171,34 @@ CombatResult CombatSystem::fight(Player& player, Enemy& enemy, std::istream& in,
             enemyAttack(enemy, player, turn, out);
             if (!player.isAlive()) return CombatResult::Defeat;
         }
+        out << "\n";
 
+        out << "【" << player.getName() << "】\n";
+
+        out << "HP ";
+        printHpBar(out,
+            player.getCurrentHp(),
+            player.getMaxHp());
+
+        out << "  "
+            << player.getCurrentHp()
+            << "/"
+            << player.getMaxHp()
+            << "\n";
+
+
+        out << "【" << enemy.getName() << "】\n";
+
+        out << "HP ";
+        printHpBar(out,
+            enemy.getCurrentHp(),
+            enemy.getMaxHp());
+
+        out << "  "
+            << enemy.getCurrentHp()
+            << "/"
+            << enemy.getMaxHp()
+            << "\n\n";
         bool actionDone = false;
         while (!actionDone) {
             out << "选择行动：1.普通攻击  2.使用物品  3.逃跑\n> ";
