@@ -1,17 +1,16 @@
-﻿#include "Game.h"
+#include "Game.h"
 
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
-int main()
-{
+int main() {
 #ifdef _WIN32
-    // 控制台输入输出统一使用 UTF-8
+    // 源码由 /utf-8 编译；控制台输入输出也统一为 UTF-8，避免中文乱码。
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
 
-    // 允许 ANSI 颜色转义序列
+    // 让 Windows 控制台正确解释原 UI 使用的 \033[xxm ANSI 颜色。
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     if (hOut != INVALID_HANDLE_VALUE) {
         DWORD mode = 0;
@@ -21,8 +20,7 @@ int main()
     }
 #endif
 
-    Game game;
-    game.run();
-
+    Game g;
+    g.run();
     return 0;
 }
