@@ -1,0 +1,13 @@
+.vs/
+x64/
+Debug/
+Release/
+build/
+out/
+*.obj
+*.pdb
+*.ilk
+*.exe
+*.tlog
+*.user
+savegame.txt
