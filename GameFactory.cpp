@@ -26,6 +26,8 @@ Item GameFactory::createItem(int id) {
         case 9: return {9, "净化结晶", ItemType::Quest, EquipmentSlot::None, "解除风之封印所需的净化材料。", true, 0, {0, 0}};
         case 10: return {10, "风之钥匙", ItemType::Quest, EquipmentSlot::None, "温迪交给你的古老钥匙。", true, 0, {0, 0}};
         case 11: return {11, "北地烟熏鸡", ItemType::Consumable, EquipmentSlot::None, "恢复40生命。", true,  40, {0, 0}};
+        case 12: return {12, "银剑", ItemType::Weapon, EquipmentSlot::Weapon, "以银白合金打造的轻剑，攻击力提高12点。", false, 0, {12, 0}};
+        case 13: return {13, "加固冒险家护甲", ItemType::Armor, EquipmentSlot::Armor, "经过瓦格纳加固的护甲，防御力提高6点。", false, 0, {0, 6}};
         default: throw std::invalid_argument("unknown item id");
     }
 }
@@ -43,6 +45,8 @@ int GameFactory::itemIdFromName(const std::string& raw) {
     if (s == "净化结晶" || s == "crystal") return 9;
     if (s == "风之钥匙" || s == "key") return 10;
     if (s == "北地烟熏鸡" || s == "smoked chicken" || s == "northern smoked chicken") return 11;
+    if (s == "银剑" || s == "silver sword") return 12;
+    if (s == "加固冒险家护甲" || s == "reinforced adventurer armor") return 13;
     return 0;
 }
 
@@ -116,8 +120,8 @@ World GameFactory::createWorld() {
     r6.addExit(Direction::West, 5); r7.addExit(Direction::East, 5);
     r8.addExit(Direction::South, 5); r8.addExit(Direction::North, 9);
     r9.addExit(Direction::South, 8); r9.addExit(Direction::North, 10);
-    r10.addExit(Direction::South, 9); r10.addExit(Direction::East, 11);
-    r11.addExit(Direction::West, 10); r11.addExit(Direction::North, 12);
+    r10.addExit(Direction::South, 9); r10.addExit(Direction::North, 11);
+    r11.addExit(Direction::South, 10); r11.addExit(Direction::North, 12);
     r12.addExit(Direction::South, 11); r12.addExit(Direction::North, 13);
     r13.addExit(Direction::South, 12); r13.addExit(Direction::North, 14);
     r14.addExit(Direction::South, 13); r14.addExit(Direction::North, 15);

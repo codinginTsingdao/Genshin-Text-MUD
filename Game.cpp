@@ -1,12 +1,14 @@
 ﻿#include "Game.h"
 #include "GameFactory.h"
 #include "SaveManager.h"
+#include "Shop.h"
 #include <algorithm>
 #include <cctype>
 #include <cstdlib>
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include <vector>
 
 #ifdef _WIN32
 #include <conio.h>
@@ -613,8 +615,111 @@ void Game::talk(const std::string& npcName) {
     }
 
     if (npc == "瓦格纳") {
-        std::cout << "瓦格纳：‘先把风龙危机解决了吧。好武器可不会自己挥起来。’\n";
+        openBlacksmithShop();
         return;
+    }
+}
+
+void Game::openBlacksmithShop() {
+    Shop shop;
+    std::cout << "瓦格纳：‘想挑把趁手的武器，还是把不用的东西卖给我？’\n";
+
+    const auto parseSelection = [](const std::string& text, int& selection) {
+        std::istringstream input(text);
+        if (!(input >> selection)) return false;
+        std::string extra;
+        return !(input >> extra);
+    };
+
+    while (true) {
+        std::cout << "\n========== 瓦格纳铁匠铺 ==========\n";
+        std::cout << "当前摩拉：" << m_player.getMora() << "\n\n";
+
+        const auto& goods = shop.catalog();
+        for (std::size_t i = 0; i < goods.size(); ++i) {
+            const Item item = GameFactory::createItem(goods[i].itemId);
+            std::cout << "[" << (i + 1) << "] " << item.name
+                      << " - " << goods[i].buyPrice << " 摩拉";
+            if (item.bonus.attack > 0) std::cout << "  攻击+" << item.bonus.attack;
+            if (item.bonus.defense > 0) std::cout << "  防御+" << item.bonus.defense;
+            std::cout << "\n";
+        }
+
+        std::cout << "[S] 出售背包物品\n";
+        std::cout << "[0] 离开铁匠铺\n";
+        std::cout << "请选择：";
+
+        std::string choice;
+        if (!std::getline(std::cin, choice)) {
+            m_running = false;
+            m_exploring = false;
+            return;
+        }
+        choice = lowerAscii(trim(choice));
+
+        if (choice == "0" || choice == "back" || choice == "返回" || choice == "离开") {
+            std::cout << "瓦格纳：‘需要装备的时候再来。’\n";
+            return;
+        }
+
+        if (choice == "s" || choice == "sell" || choice == "出售") {
+            std::vector<int> sellableItemIds;
+            std::cout << "\n---------- 可出售物品 ----------\n";
+            for (const ItemStack& stack : m_player.inventory().items()) {
+                const int price = shop.sellPrice(stack.item);
+                if (price <= 0) continue;
+                sellableItemIds.push_back(stack.item.id);
+                std::cout << "[" << sellableItemIds.size() << "] "
+                          << stack.item.name << " x" << stack.quantity
+                          << " - " << price << " 摩拉/件\n";
+            }
+
+            if (sellableItemIds.empty()) {
+                std::cout << YELLOW << "背包中没有瓦格纳愿意收购的物品。" << RESET << "\n";
+                continue;
+            }
+
+            std::cout << "[0] 返回商店\n";
+            std::cout << "请选择要出售的物品：";
+            std::string sellChoice;
+            if (!std::getline(std::cin, sellChoice)) {
+                m_running = false;
+                m_exploring = false;
+                return;
+            }
+
+            int sellSelection = 0;
+            if (!parseSelection(trim(sellChoice), sellSelection) ||
+                sellSelection < 0 ||
+                sellSelection > static_cast<int>(sellableItemIds.size())) {
+                std::cout << YELLOW << "请输入有效的物品编号。" << RESET << "\n";
+                continue;
+            }
+            if (sellSelection == 0) continue;
+
+            std::string message;
+            if (shop.sell(m_player, sellableItemIds[sellSelection - 1], message)) {
+                std::cout << GREEN << message << RESET << "\n";
+            } else {
+                std::cout << YELLOW << message << RESET << "\n";
+            }
+            continue;
+        }
+
+        int buySelection = 0;
+        if (!parseSelection(choice, buySelection) ||
+            buySelection < 1 ||
+            buySelection > static_cast<int>(goods.size())) {
+            std::cout << YELLOW << "请输入商品编号、S 或 0。" << RESET << "\n";
+            continue;
+        }
+
+        std::string message;
+        if (shop.buy(m_player, goods[buySelection - 1].itemId, message)) {
+            std::cout << GREEN << message << RESET << "\n";
+        } else {
+            std::cout << YELLOW << message << RESET << "\n";
+        }
     }
 }
 

@@ -32,6 +32,7 @@ private:
     void showHelp() const;
     void showStatus() const;
     void showInventory() const;
+    void openBlacksmithShop();
     void move(Direction direction);
     void talk(const std::string& npcName);
     void attack(const std::string& enemyName);

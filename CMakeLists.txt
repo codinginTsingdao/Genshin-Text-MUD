@@ -15,6 +15,7 @@ add_executable(genshinn
     BossEnemy.cpp
     Inventory.cpp
     Equipment.cpp
+    Shop.cpp
     Room.cpp
     World.cpp
     CommandParser.cpp
